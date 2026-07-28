@@ -87,7 +87,7 @@ export default function ProxyDashboard() {
   const [activePanel, setActivePanel] = useState<"logs" | "sandbox" | "settings">("logs");
 
   // Sandbox Playground state
-  const [sandboxMethod, setSandboxMethod] = useState("GET");
+  const [sandboxMethod, setSandboxMethod] = useState("POST");
   const [sandboxPath, setSandboxPath] = useState("/get");
   const [sandboxBody, setSandboxBody] = useState('{\n  "name": "Proxy Test",\n  "active": true\n}');
   const [sandboxHeaders, setSandboxHeaders] = useState('{\n  "X-Custom-Test": "Hello"\n}');
@@ -340,20 +340,18 @@ export default function ProxyDashboard() {
           {/* Status Indicator */}
           <button
             onClick={() => saveConfig({ isActive: !config.isActive })}
-            className={`flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border text-xs font-semibold transition-all duration-200 ${
-              config.isActive
+            className={`flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border text-xs font-semibold transition-all duration-200 ${config.isActive
                 ? "bg-emerald-500/10 border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/20 shadow-sm shadow-emerald-500/10"
                 : "bg-rose-500/10 border-rose-500/40 text-rose-400 hover:bg-rose-500/20"
-            }`}
+              }`}
           >
             <span className="relative flex h-2 w-2">
               {config.isActive && (
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               )}
               <span
-                className={`relative inline-flex rounded-full h-2 w-2 ${
-                  config.isActive ? "bg-emerald-500" : "bg-rose-500"
-                }`}
+                className={`relative inline-flex rounded-full h-2 w-2 ${config.isActive ? "bg-emerald-500" : "bg-rose-500"
+                  }`}
               ></span>
             </span>
             {config.isActive ? "Proxy Active" : "Proxy Disabled"}
@@ -427,11 +425,10 @@ export default function ProxyDashboard() {
             {/* Target Health Badge */}
             {targetHealth && (
               <div
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium border ${
-                  targetHealth.ok
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium border ${targetHealth.ok
                     ? "bg-emerald-500/10 border-emerald-500/30 text-emerald-300"
                     : "bg-rose-500/10 border-rose-500/30 text-rose-300"
-                }`}
+                  }`}
               >
                 {targetHealth.ok ? (
                   <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -459,11 +456,10 @@ export default function ProxyDashboard() {
                     saveConfig({ targetUrl: preset.url });
                     testConnection(preset.url);
                   }}
-                  className={`px-3 py-1 rounded-lg border text-xs font-mono transition-all ${
-                    config.targetUrl === preset.url
+                  className={`px-3 py-1 rounded-lg border text-xs font-mono transition-all ${config.targetUrl === preset.url
                       ? "bg-indigo-600/20 border-indigo-500/50 text-indigo-300"
                       : "bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-200 hover:border-zinc-700"
-                  }`}
+                    }`}
                 >
                   {preset.label}
                 </button>
@@ -474,33 +470,30 @@ export default function ProxyDashboard() {
             <div className="flex items-center p-1 bg-zinc-900 border border-zinc-800 rounded-xl">
               <button
                 onClick={() => setActivePanel("logs")}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                  activePanel === "logs"
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activePanel === "logs"
                     ? "bg-indigo-600 text-white shadow-sm"
                     : "text-zinc-400 hover:text-white"
-                }`}
+                  }`}
               >
                 <Activity className="w-3.5 h-3.5" />
                 Live Inspector ({logs.length})
               </button>
               <button
                 onClick={() => setActivePanel("sandbox")}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                  activePanel === "sandbox"
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activePanel === "sandbox"
                     ? "bg-indigo-600 text-white shadow-sm"
                     : "text-zinc-400 hover:text-white"
-                }`}
+                  }`}
               >
                 <Play className="w-3.5 h-3.5" />
                 Request Sandbox
               </button>
               <button
                 onClick={() => setActivePanel("settings")}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                  activePanel === "settings"
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${activePanel === "settings"
                     ? "bg-indigo-600 text-white shadow-sm"
                     : "text-zinc-400 hover:text-white"
-                }`}
+                  }`}
               >
                 <Sliders className="w-3.5 h-3.5" />
                 Custom Headers ({config.customHeaders.length})
@@ -664,11 +657,10 @@ export default function ProxyDashboard() {
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-zinc-400">Sandbox Dispatch Result</span>
                   <span
-                    className={`px-2 py-0.5 text-xs rounded border ${
-                      sandboxResult.status >= 200 && sandboxResult.status < 300
+                    className={`px-2 py-0.5 text-xs rounded border ${sandboxResult.status >= 200 && sandboxResult.status < 300
                         ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
                         : "bg-rose-500/20 text-rose-300 border-rose-500/40"
-                    }`}
+                      }`}
                   >
                     HTTP {sandboxResult.status} {sandboxResult.statusText}
                   </span>
@@ -744,11 +736,10 @@ export default function ProxyDashboard() {
                       <div
                         key={log.id}
                         onClick={() => setSelectedLog(log)}
-                        className={`p-3.5 cursor-pointer transition-all duration-150 flex items-center justify-between gap-3 ${
-                          isSelected
+                        className={`p-3.5 cursor-pointer transition-all duration-150 flex items-center justify-between gap-3 ${isSelected
                             ? "bg-indigo-600/10 border-l-4 border-indigo-500 pl-3"
                             : "hover:bg-zinc-800/40"
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
                           <span
@@ -833,41 +824,37 @@ export default function ProxyDashboard() {
                   <div className="flex items-center px-4 bg-zinc-950/60 border-b border-zinc-800 text-xs">
                     <button
                       onClick={() => setInspectorTab("response-body")}
-                      className={`px-3 py-2.5 font-medium border-b-2 transition-colors ${
-                        inspectorTab === "response-body"
+                      className={`px-3 py-2.5 font-medium border-b-2 transition-colors ${inspectorTab === "response-body"
                           ? "border-indigo-500 text-indigo-300"
                           : "border-transparent text-zinc-400 hover:text-zinc-200"
-                      }`}
+                        }`}
                     >
                       Response Body
                     </button>
                     <button
                       onClick={() => setInspectorTab("request-body")}
-                      className={`px-3 py-2.5 font-medium border-b-2 transition-colors ${
-                        inspectorTab === "request-body"
+                      className={`px-3 py-2.5 font-medium border-b-2 transition-colors ${inspectorTab === "request-body"
                           ? "border-indigo-500 text-indigo-300"
                           : "border-transparent text-zinc-400 hover:text-zinc-200"
-                      }`}
+                        }`}
                     >
                       Request Body
                     </button>
                     <button
                       onClick={() => setInspectorTab("headers")}
-                      className={`px-3 py-2.5 font-medium border-b-2 transition-colors ${
-                        inspectorTab === "headers"
+                      className={`px-3 py-2.5 font-medium border-b-2 transition-colors ${inspectorTab === "headers"
                           ? "border-indigo-500 text-indigo-300"
                           : "border-transparent text-zinc-400 hover:text-zinc-200"
-                      }`}
+                        }`}
                     >
                       Headers & Meta
                     </button>
                     <button
                       onClick={() => setInspectorTab("curl")}
-                      className={`px-3 py-2.5 font-medium border-b-2 transition-colors ${
-                        inspectorTab === "curl"
+                      className={`px-3 py-2.5 font-medium border-b-2 transition-colors ${inspectorTab === "curl"
                           ? "border-indigo-500 text-indigo-300"
                           : "border-transparent text-zinc-400 hover:text-zinc-200"
-                      }`}
+                        }`}
                     >
                       cURL
                     </button>
