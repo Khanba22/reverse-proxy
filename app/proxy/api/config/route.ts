@@ -11,7 +11,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const updated = proxyStore.updateConfig(body);
     return NextResponse.json(updated);
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Invalid JSON configuration payload" },
       { status: 400 }

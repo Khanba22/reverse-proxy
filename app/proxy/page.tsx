@@ -13,15 +13,10 @@ import {
   Plus,
   Play,
   Activity,
-  Layers,
-  Settings2,
   Code2,
-  ExternalLink,
   Search,
-  Filter,
   Clock,
   Terminal,
-  ShieldCheck,
   Globe,
   Sliders,
 } from "lucide-react";
@@ -74,7 +69,6 @@ export default function ProxyDashboard() {
   const [selectedLog, setSelectedLog] = useState<RequestLog | null>(null);
   const [copiedProxyUrl, setCopiedProxyUrl] = useState(false);
   const [copiedCurl, setCopiedCurl] = useState(false);
-  const [loadingConfig, setLoadingConfig] = useState(true);
   const [savingConfig, setSavingConfig] = useState(false);
   const [testingTarget, setTestingTarget] = useState(false);
   const [targetHealth, setTargetHealth] = useState<{
@@ -102,7 +96,7 @@ export default function ProxyDashboard() {
 
   const fetchConfig = useCallback(async () => {
     try {
-      const res = await fetch("/api/config");
+      const res = await fetch("/proxy/api/config");
       if (res.ok) {
         const data: ProxyConfig = await res.json();
         setConfig(data);
@@ -110,14 +104,12 @@ export default function ProxyDashboard() {
       }
     } catch (e) {
       console.error("Failed to load config", e);
-    } finally {
-      setLoadingConfig(false);
     }
   }, []);
 
   const fetchLogs = useCallback(async () => {
     try {
-      const res = await fetch("/api/logs");
+      const res = await fetch("/proxy/api/logs");
       if (res.ok) {
         const data: RequestLog[] = await res.json();
         setLogs(data);
@@ -140,7 +132,7 @@ export default function ProxyDashboard() {
   const saveConfig = async (newPartial: Partial<ProxyConfig>) => {
     setSavingConfig(true);
     try {
-      const res = await fetch("/api/config", {
+      const res = await fetch("/proxy/api/config", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newPartial),
@@ -161,7 +153,7 @@ export default function ProxyDashboard() {
     setTestingTarget(true);
     setTargetHealth(null);
     try {
-      const res = await fetch("/api/test-target", {
+      const res = await fetch("/proxy/api/test-target", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ targetUrl: targetToTest || inputUrl }),
@@ -177,7 +169,7 @@ export default function ProxyDashboard() {
 
   const clearLogs = async () => {
     try {
-      await fetch("/api/logs", { method: "DELETE" });
+      await fetch("/proxy/api/logs", { method: "DELETE" });
       setLogs([]);
       setSelectedLog(null);
     } catch (e) {
@@ -194,7 +186,7 @@ export default function ProxyDashboard() {
         if (sandboxHeaders.trim()) {
           parsedHeaders = JSON.parse(sandboxHeaders);
         }
-      } catch (e) {
+      } catch {
         alert("Invalid Sandbox Headers JSON");
         setDispatchingSandbox(false);
         return;
@@ -209,7 +201,7 @@ export default function ProxyDashboard() {
         }
       }
 
-      const res = await fetch("/api/test-request", {
+      const res = await fetch("/proxy/api/test-request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -232,7 +224,7 @@ export default function ProxyDashboard() {
 
   const copyProxyUrl = () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
-    navigator.clipboard.writeText(`${origin}/api/proxy`);
+    navigator.clipboard.writeText(`${origin}/*`);
     setCopiedProxyUrl(true);
     setTimeout(() => setCopiedProxyUrl(false), 2000);
   };
@@ -334,12 +326,12 @@ export default function ProxyDashboard() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold tracking-tight text-white">Reverse Proxy Engine</h1>
+              <h1 className="text-lg font-bold tracking-tight text-white">Reverse Proxy Control Center</h1>
               <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                v1.0
+                /proxy
               </span>
             </div>
-            <p className="text-xs text-zinc-400">Forward incoming request payloads verbatim</p>
+            <p className="text-xs text-zinc-400">All domain routes (including /) are forwarded verbatim</p>
           </div>
         </div>
 
@@ -371,9 +363,10 @@ export default function ProxyDashboard() {
           <button
             onClick={copyProxyUrl}
             className="flex items-center gap-2 px-3 py-1.5 text-xs font-mono bg-zinc-800/80 hover:bg-zinc-800 border border-zinc-700/80 rounded-lg text-zinc-300 transition-colors"
+            title="Copy Domain Forwarding Rule"
           >
             <Globe className="w-3.5 h-3.5 text-indigo-400" />
-            <span>/api/proxy</span>
+            <span>Forwarding All Traffic</span>
             {copiedProxyUrl ? (
               <Check className="w-3.5 h-3.5 text-emerald-400" />
             ) : (
@@ -595,7 +588,7 @@ export default function ProxyDashboard() {
                 Request Sandbox & Dispatcher
               </h2>
               <p className="text-xs text-zinc-400 mt-1">
-                Dispatch test requests directly through your local proxy endpoint (<code className="text-indigo-300">/api/proxy/*</code>) to test forwarding behavior immediately.
+                Dispatch test requests directly through your domain root routes (<code className="text-indigo-300">/</code> or <code className="text-indigo-300">/anything</code>) to test forwarding behavior immediately.
               </p>
             </div>
 
@@ -617,7 +610,7 @@ export default function ProxyDashboard() {
 
               <div className="md:col-span-3">
                 <label className="text-xs font-semibold text-zinc-400 block mb-1.5">
-                  Proxy Subpath (Appended to Target URL)
+                  Subpath (e.g. / or /get or /v1/todos/1)
                 </label>
                 <input
                   type="text"
@@ -741,7 +734,7 @@ export default function ProxyDashboard() {
                     <Terminal className="w-8 h-8 mx-auto text-zinc-600 stroke-1" />
                     <p className="text-xs">No proxied requests captured yet.</p>
                     <p className="text-[11px] text-zinc-600">
-                      Send a request to <code className="text-indigo-400">/api/proxy/*</code> or use the Sandbox above.
+                      Send any request to <code className="text-indigo-400">/</code> or any subpath on this domain.
                     </p>
                   </div>
                 ) : (

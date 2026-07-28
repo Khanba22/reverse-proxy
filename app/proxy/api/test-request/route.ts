@@ -7,9 +7,9 @@ export async function POST(request: Request) {
     const host = request.headers.get("host") || "localhost:3000";
     const protocol = request.headers.get("x-forwarded-proto") || "http";
     
-    // Construct local proxy destination URL
+    // Construct local proxy destination URL (root path)
     const cleanPath = path.startsWith("/") ? path : `/${path}`;
-    const proxyUrl = `${protocol}://${host}/api/proxy${cleanPath}`;
+    const proxyUrl = `${protocol}://${host}${cleanPath}`;
 
     const fetchOptions: RequestInit = {
       method,

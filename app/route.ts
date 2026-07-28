@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { handleProxyRequest } from "@/lib/proxy-handler";
 
 async function proxy(req: NextRequest) {
-  return handleProxyRequest(req, "");
+  return handleProxyRequest(req, "/");
 }
 
 export const GET = proxy;
