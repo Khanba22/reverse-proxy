@@ -16,6 +16,19 @@ const HOP_BY_HOP_HEADERS = new Set([
 ]);
 
 export async function handleProxyRequest(req: NextRequest, pathSuffix: string = "") {
+  const pathname = req.nextUrl?.pathname || "";
+
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/proxy") ||
+    pathname === "/favicon.ico" ||
+    pathSuffix.startsWith("/_next") ||
+    pathSuffix.startsWith("/proxy") ||
+    pathSuffix === "/favicon.ico"
+  ) {
+    return new NextResponse("Not Found", { status: 404 });
+  }
+
   const startTime = performance.now();
   const logId = Math.random().toString(36).substring(2, 10);
   const timestamp = new Date().toISOString();
